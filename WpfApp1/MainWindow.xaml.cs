@@ -32,8 +32,10 @@ namespace WpfApp1
         //для хранения данных из CSVString файла
         string CSVString;
         //Клиент для подключения к принтеру
-        TcpClient tcpClient;
+        TcpClient tcpTransmitterClient;
+        TcpClient tcpReceiverClient;
         public IPEndPoint printerEndPoint;
+        public IPEndPoint userEndPoint;
         public MainWindow()
         {
             InitializeComponent();
@@ -76,13 +78,41 @@ namespace WpfApp1
         private void bConnect_Click(object sender, RoutedEventArgs e)
         {
 
-            //определяем точку подключения к принтеру
-            printerEndPoint = new IPEndPoint(IPAddress.Parse(tbIP.Text),
-                    Convert.ToInt32(tbPort.Text));
-            tcpClient = new TcpClient(printerEndPoint);
+            
             try
             {
-                tcpClient.ConnectAsync(IPAddress.Parse(tbIP.Text), Convert.ToInt32(tbPort.Text));
+                //определяем точку подключения к принтеру
+                printerEndPoint = new IPEndPoint(IPAddress.Parse(tbIP.Text),
+                        Convert.ToInt32(tbPort.Text));
+                userEndPoint = new IPEndPoint(
+                    IPAddress.Parse(tbMyIP.Text),
+                    Convert.ToInt32(tbPort.Text)
+                    );
+                
+            }catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка в IP\n" + ex.Message.ToString());
+                return;
+            }
+            
+            try
+            {
+                //Если порты были открыты, закрываем их
+                if(tcpReceiverClient != null)
+                {
+                    tcpReceiverClient.Close();
+                }
+                if(tcpTransmitterClient != null)
+                {
+                    tcpTransmitterClient.Close();
+                }
+                //Инициализация клиента для отправки сообщений
+                tcpTransmitterClient = new TcpClient(printerEndPoint);
+                tcpTransmitterClient.ConnectAsync(IPAddress.Parse(tbIP.Text), Convert.ToInt32(tbPort.Text));
+
+                //Инициализация клиента для приёма сообщений
+                tcpReceiverClient = new TcpClient(userEndPoint);
+                tcpTransmitterClient.ConnectAsync(IPAddress.Parse(tbMyIP.Text), Convert.ToInt32(tbMyPort.Text));
             }
             catch (Exception ex)
             {
@@ -91,11 +121,12 @@ namespace WpfApp1
             }
             MessageBox.Show("Подключение установлено.");
 
-            //Сюда добавить конфигурирование принтера
+            //Сюда добавить конфигурирование принтера при подключении
 
         }
         private string getMyIP()
         {
+            //Узнаём название нашего компа
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (IPAddress ip in host.AddressList)
             {
@@ -124,7 +155,7 @@ namespace WpfApp1
         {
 
 
-            NetworkStream networkStream = tcpClient.GetStream();
+            NetworkStream networkStream = tcpTransmitterClient.GetStream();
             StreamWriter streamWriter = new StreamWriter(networkStream);
             StreamReader streamReader = new StreamReader(networkStream);
             streamWriter.AutoFlush = true;//Автоматически очищать буфер
@@ -144,50 +175,36 @@ namespace WpfApp1
         }
         private void bPrint_Click(object sender, RoutedEventArgs e)
         {
-            if (CSVString != null)
-            {
+            //if (CSVString != null)
+            //{
                 try
                 {
-
-                    //адрес для подключения
-                    string remoteAddress = tbIP.Text;
-                    // порт, к которому мы подключаемся
-                    int remotePort = Convert.ToInt16(tbPort.Text);
-
-
                     SendMessage("sad"); // отправляем сообщение
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
-            }
+            //}
         }
         
-        // Доделавть автоматическое IP
-        private void bGetMyIP_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (NetworkInterface f in NetworkInterface.GetAllNetworkInterfaces())
-                if (f.OperationalStatus == OperationalStatus.Up)
-                    for (int i = 0; i < 10; i++)
-                    {
-                        GatewayIPAddressInformationCollection gatewayIPAddressInformation =
-                            f.GetIPProperties().GatewayAddresses;
-                        string ipAddres = gatewayIPAddressInformation[i].Address.ToString();
-
-
-                        IPAddressCollection dnsIPAddresses = f.GetIPProperties().DnsAddresses;
-                        // f.GetIPProperties().;
-
-                        string gatewayIPAddres = gatewayIPAddressInformation[i].Address.ToString();
-                    };
-
-
-        }
+        
+       
 
         private void tbMyIP_Initialized(object sender, EventArgs e)
         {
-            tbMyIP.Text = getMyIP();
+            tbMyIP.Text =
+                NetworkInterface
+                .GetAllNetworkInterfaces()
+                .Where(n => n.OperationalStatus == OperationalStatus.Up)
+                //.Where(n => n.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || n.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                //.Where(n => n.Name == "Wi-Fi")
+                .SelectMany(n => n.GetIPProperties()?.UnicastAddresses)
+                .Where(n => n.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                .Select(g => g?.Address)
+                .Where(a => a != null)
+                .FirstOrDefault()
+                .ToString();
         }
 
         private void tbMyGateway_Initialized(object sender, EventArgs e)
@@ -203,23 +220,7 @@ namespace WpfApp1
                 .ToString();
             
         }
-        public System.Net.IPAddress GetIpAddress()
-        {
-            return NetworkInterface
-                .GetAllNetworkInterfaces()
-                .Where(n => n.OperationalStatus == OperationalStatus.Up)
-                //.Where(n => n.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || n.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
-                //.Where(n => n.Name == "Wi-Fi")
-                .SelectMany(n => n.GetIPProperties()?.UnicastAddresses)
-                .Where(n => n.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                .Select(g => g?.Address)
-                .Where(a => a != null)
-                .FirstOrDefault();
-        }
-        private void tbMyPort_Initialized(object sender, EventArgs e)
-        {
-
-
-        }
+        
+       
     }
 }

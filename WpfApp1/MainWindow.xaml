@@ -11,14 +11,16 @@
         <Label Content="Port" HorizontalAlignment="Left" Margin="569,14,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="tbIP" HorizontalAlignment="Left" Margin="424,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="tbIP_TextChanged"/>
         <TextBox x:Name="tbPort" HorizontalAlignment="Left" Margin="569,55,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="bConnect" Content="Подключить" HorizontalAlignment="Left" Margin="712,55,0,0" VerticalAlignment="Top" Height="18" Width="78" Click="bConnect_Click"/>
-        <Button x:Name="bCSVImport" Content="CSV" HorizontalAlignment="Left" Margin="24,27,0,0" VerticalAlignment="Top" Click="bCSVImport_Click"/>
+        <Button x:Name="bConnect" Content="Подключить" HorizontalAlignment="Left" Margin="712,55,0,0" VerticalAlignment="Top" Height="36" Width="78" Click="bConnect_Click"/>
+        <Button x:Name="bCSVImport" Content="CSV Подключить" HorizontalAlignment="Left" Margin="24,27,0,0" VerticalAlignment="Top" Click="bCSVImport_Click" Height="46" Width="106"/>
         <Label x:Name="logLabel" Content="Label" HorizontalAlignment="Left" Margin="160,27,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="bPrint" Content="Печать" HorizontalAlignment="Left" Margin="160,99,0,0" VerticalAlignment="Top" Click="bPrint_Click"/>
-        <Button x:Name="bGetMyIP" Content="Button" HorizontalAlignment="Left" Margin="345,99,0,0" VerticalAlignment="Top" Click="bGetMyIP_Click"/>
+        <Button x:Name="bPrint" Content="Печать" HorizontalAlignment="Left" Margin="24,88,0,0" VerticalAlignment="Top" Click="bPrint_Click" Height="50" Width="106"/>
         <TextBox x:Name="tbMyIP" HorizontalAlignment="Left" Margin="424,99,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Initialized="tbMyIP_Initialized"/>
         <TextBox x:Name="tbMyPort" HorizontalAlignment="Left" Margin="569,99,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Initialized="tbMyPort_Initialized"/>
         <TextBox x:Name="tbMyGateway" HorizontalAlignment="Left" Margin="424,147,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Initialized="tbMyGateway_Initialized"/>
+        <Label Content="Принтер" HorizontalAlignment="Left" Margin="355,51,0,0" VerticalAlignment="Top"/>
+        <Label Content="ПК" HorizontalAlignment="Left" Margin="355,95,0,0" VerticalAlignment="Top"/>
+        <Label Content="Модем" HorizontalAlignment="Left" Margin="355,143,0,0" VerticalAlignment="Top"/>
 
 
 
