@@ -158,18 +158,18 @@ namespace WpfApp1
 
             NetworkStream networkStream = tcpTransmitterClient.GetStream();
             StreamWriter streamWriter = new StreamWriter(networkStream);
-            StreamReader streamReader = new StreamReader(networkStream);
+            //StreamReader streamReader = new StreamReader(networkStream);
             streamWriter.AutoFlush = true;//Автоматически очищать буфер
             for (int i = 0; i < 10; i++)
             {
 
                 await streamWriter.WriteLineAsync(DateTime.Now.ToLongDateString());
 
-                string dataFromServer = await streamReader.ReadLineAsync();
-                if (!string.IsNullOrEmpty(dataFromServer))
-                {
-                    MessageBox.Show(dataFromServer);
-                }
+                //string dataFromPrinter = await streamReader.ReadLineAsync();
+                //if (!string.IsNullOrEmpty(dataFromPrinter))
+                //{
+                //    MessageBox.Show(dataFromPrinter);
+                //}
 
             }
 
