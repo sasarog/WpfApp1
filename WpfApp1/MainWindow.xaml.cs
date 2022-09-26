@@ -78,7 +78,7 @@ namespace WpfApp1
         private void bConnect_Click(object sender, RoutedEventArgs e)
         {
 
-            
+
             try
             {
                 //определяем точку подключения к принтеру
@@ -88,21 +88,22 @@ namespace WpfApp1
                     IPAddress.Parse(tbMyIP.Text),
                     Convert.ToInt32(tbPort.Text)
                     );
-                
-            }catch (Exception ex)
+
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("Ошибка в IP\n" + ex.Message.ToString());
                 return;
             }
-            
+
             try
             {
                 //Если порты были открыты, закрываем их
-                if(tcpReceiverClient != null)
+                if (tcpReceiverClient != null)
                 {
                     tcpReceiverClient.Close();
                 }
-                if(tcpTransmitterClient != null)
+                if (tcpTransmitterClient != null)
                 {
                     tcpTransmitterClient.Close();
                 }
@@ -177,20 +178,20 @@ namespace WpfApp1
         {
             //if (CSVString != null)
             //{
-                try
-                {
-                    SendMessage("sad"); // отправляем сообщение
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+            try
+            {
+                SendMessage("sad"); // отправляем сообщение
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             //}
         }
-        
-        
-       
 
+
+
+        //Ёбаная магия
         private void tbMyIP_Initialized(object sender, EventArgs e)
         {
             tbMyIP.Text =
@@ -207,20 +208,21 @@ namespace WpfApp1
                 .ToString();
         }
 
+        //Вторая ёбаная магия
         private void tbMyGateway_Initialized(object sender, EventArgs e)
         {
-             tbMyGateway.Text = NetworkInterface
-                .GetAllNetworkInterfaces()
-                .Where(n => n.OperationalStatus == OperationalStatus.Up)
-                .Where(n => n.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-                .SelectMany(n => n.GetIPProperties()?.GatewayAddresses)
-                .Select(g => g?.Address)
-                .Where(a => a != null)
-                .LastOrDefault()
-                .ToString();
-            
+            tbMyGateway.Text = NetworkInterface
+               .GetAllNetworkInterfaces()
+               .Where(n => n.OperationalStatus == OperationalStatus.Up)
+               .Where(n => n.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+               .SelectMany(n => n.GetIPProperties()?.GatewayAddresses)
+               .Select(g => g?.Address)
+               .Where(a => a != null)
+               .LastOrDefault()
+               .ToString();
+
         }
-        
-       
+
+
     }
 }
