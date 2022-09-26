@@ -31,9 +31,11 @@ namespace WpfApp1
     {
         //для хранения данных из CSVString файла
         string CSVString;
+        public EndPoint printerEndPoint;
         public MainWindow()
         {
             InitializeComponent();
+            
         }
 
         private void explander1_Collapsed(object sender, RoutedEventArgs e)
@@ -59,16 +61,57 @@ namespace WpfApp1
         private void bConnect_Click(object sender, RoutedEventArgs e)
         {
             //Получение устройств в сети
-            NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-            List<IPInterfaceProperties> iPInterfaceProperties = new List<IPInterfaceProperties>();
-            foreach (NetworkInterface networkInterface in networkInterfaces)
+            //NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            //List<IPInterfaceProperties> iPInterfaceProperties = new List<IPInterfaceProperties>();
+            //foreach (NetworkInterface networkInterface in networkInterfaces)
+            //{
+            //    iPInterfaceProperties.Add(networkInterface.GetIPProperties());
+
+
+
+            //}
+            printerEndPoint = new IPEndPoint(IPAddress.Parse(tbIP.Text),
+                    Convert.ToInt32(tbPort.Text));
+
+
+        }
+        void ReceiveMessage()
+        {   // UdpClient для получения данных
+            UdpClient receiver = new UdpClient(
+                Convert.ToInt16("192.168.1.1"));
+            // адрес входящего подключения
+            IPEndPoint remoteIp = null;
+            try
             {
-                iPInterfaceProperties.Add(networkInterface.GetIPProperties());
+                //бесконечно читываем, пока не получим сообщение
+                while (true)
+                {
+                    byte[] data =
+                        receiver.Receive(
+                           new IPEndPoint(ref IPAddress.Parse(tbIP.Text),
+                    Convert.ToInt32(tbPort.Text))
+                            ); // получаем данные
+                               //преобразовываем UTF8 строку в нормальную.
+                    String ^ message = System::Text::Encoding::UTF8->GetString(data);
+                    //Пробуем прописать текст, но эьто не работает пока что.
+                    //this->Invoke((MethodInvoker) {
+                    //	this->tbChat->Text = message;
+                    tbChat->Text += message + '\n';
+                    //MessageBox::Show(message + '\n');
 
+                    //SafeDel^ safedel = gcnew SafeDel(&Messenger::SafeTBChatAdd);
 
+                }
+            }
+            catch (Exception^ex)
+			{
+                MessageBox::Show("Receeve error\n" + ex->Message);
             }
 
-
+            finally
+            {
+                receiver->Close();
+            }
         }
 
         private void bCSVImport_Click(object sender, RoutedEventArgs e)
@@ -82,32 +125,8 @@ namespace WpfApp1
         }
         private void SendMessage(string message)
         {
+            TcpClient tcpClient = new TcpClient();
 
-
-            UdpClient sender = new UdpClient();
-            try
-            {
-                
-                // создаем UdpClient для отправки сообщений
-                sender.Connect(
-                    new IPEndPoint(IPAddress.Parse(tbIP.Text),
-                    Convert.ToInt32(tbPort.Text))
-                    );
-                // сообщение для отправки
-                
-
-                sender.Send(Encoding.UTF8.GetBytes(message), message.Length % 4);
-            }
-
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-
-            finally
-            {
-                sender.Close();
-            }
         }
         private void bPrint_Click(object sender, RoutedEventArgs e)
         {
