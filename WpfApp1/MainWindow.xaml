@@ -15,6 +15,10 @@
         <Button x:Name="bCSVImport" Content="CSV" HorizontalAlignment="Left" Margin="24,27,0,0" VerticalAlignment="Top" Click="bCSVImport_Click"/>
         <Label x:Name="logLabel" Content="Label" HorizontalAlignment="Left" Margin="160,27,0,0" VerticalAlignment="Top"/>
         <Button x:Name="bPrint" Content="Печать" HorizontalAlignment="Left" Margin="160,99,0,0" VerticalAlignment="Top" Click="bPrint_Click"/>
+        <Button x:Name="bGetMyIP" Content="Button" HorizontalAlignment="Left" Margin="345,99,0,0" VerticalAlignment="Top" Click="bGetMyIP_Click"/>
+        <TextBox x:Name="tbMyIP" HorizontalAlignment="Left" Margin="424,99,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Initialized="tbMyIP_Initialized"/>
+        <TextBox x:Name="tbMyPort" HorizontalAlignment="Left" Margin="569,99,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120" Initialized="tbMyPort_Initialized"/>
+        <TextBox x:Name="tbMyGateway" HorizontalAlignment="Left" Margin="424,147,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Initialized="tbMyGateway_Initialized"/>
 
 
 
