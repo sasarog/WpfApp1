@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -100,7 +101,7 @@ namespace WpfApp1
 
             catch (Exception ex)
             {
-                MessageBox.Show("Send Error " + ex.Message);
+                MessageBox.Show("Error: " + ex.Message);
             }
 
             finally
@@ -125,7 +126,7 @@ namespace WpfApp1
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.MessageMessage);
+                    MessageBox.Show(ex.Message);
                 }
             }
         }
