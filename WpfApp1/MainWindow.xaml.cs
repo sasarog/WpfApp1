@@ -31,7 +31,8 @@ namespace WpfApp1
     {
         //для хранения данных из CSVString файла
         string CSVString;
-        public EndPoint printerEndPoint;
+
+        public IPEndPoint printerEndPoint;
         public MainWindow()
         {
             InitializeComponent();
@@ -76,42 +77,8 @@ namespace WpfApp1
 
         }
         void ReceiveMessage()
-        {   // UdpClient для получения данных
-            UdpClient receiver = new UdpClient(
-                Convert.ToInt16("192.168.1.1"));
-            // адрес входящего подключения
-            IPEndPoint remoteIp = null;
-            try
-            {
-                //бесконечно читываем, пока не получим сообщение
-                while (true)
-                {
-                    byte[] data =
-                        receiver.Receive(
-                           new IPEndPoint(ref IPAddress.Parse(tbIP.Text),
-                    Convert.ToInt32(tbPort.Text))
-                            ); // получаем данные
-                               //преобразовываем UTF8 строку в нормальную.
-                    String ^ message = System::Text::Encoding::UTF8->GetString(data);
-                    //Пробуем прописать текст, но эьто не работает пока что.
-                    //this->Invoke((MethodInvoker) {
-                    //	this->tbChat->Text = message;
-                    tbChat->Text += message + '\n';
-                    //MessageBox::Show(message + '\n');
-
-                    //SafeDel^ safedel = gcnew SafeDel(&Messenger::SafeTBChatAdd);
-
-                }
-            }
-            catch (Exception^ex)
-			{
-                MessageBox::Show("Receeve error\n" + ex->Message);
-            }
-
-            finally
-            {
-                receiver->Close();
-            }
+        {   
+            
         }
 
         private void bCSVImport_Click(object sender, RoutedEventArgs e)
@@ -123,9 +90,35 @@ namespace WpfApp1
             }
 
         }
-        private void SendMessage(string message)
+        private async void SendMessage(string message)
         {
-            TcpClient tcpClient = new TcpClient();
+
+            TcpClient tcpClient = new TcpClient(printerEndPoint);
+            try
+            {
+                tcpClient.ConnectAsync(IPAddress.Parse(tbIP.Text),Convert.ToInt32(tbPort.Text));
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+            MessageBox.Show("Подключение установлено.");
+            NetworkStream networkStream = tcpClient.GetStream();
+            StreamWriter streamWriter = new StreamWriter(networkStream);
+            StreamReader streamReader = new StreamReader(networkStream);
+            streamWriter.AutoFlush = true;//Автоматически очищать буфер
+            for (int i = 0; i < 10; i++)
+            {
+                
+                await streamWriter.WriteLineAsync(DateTime.Now.ToLongDateString());
+                
+                string dataFromServer = await streamReader.ReadLineAsync();
+                if (!string.IsNullOrEmpty(dataFromServer))
+                {
+                    MessageBox.Show(dataFromServer);
+                }
+
+            }
 
         }
         private void bPrint_Click(object sender, RoutedEventArgs e)
